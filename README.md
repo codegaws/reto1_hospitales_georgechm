@@ -4,7 +4,8 @@ En Oracle, registro de tablas 🚀
 (Gerente, Condición, Distrito, Sede, Provincia) menos en la tabla Hospital. 
 ## Grafico de las relaciones
 
-![image](https://github.com/user-attachments/assets/e824b0b7-d15b-44b6-9530-c9cfbd224af7)
+![image](https://github.com/user-attachments/assets/0843eb02-31fb-4f60-9c94-8834736ca43e)
+
 
 ### Detalle de los PROCEDIMIENTOS ALMACENADOS 🚀
 
