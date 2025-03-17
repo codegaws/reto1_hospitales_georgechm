@@ -6,85 +6,118 @@ En Oracle, registro de tablas 🚀
 
 ![image](https://github.com/user-attachments/assets/e824b0b7-d15b-44b6-9530-c9cfbd224af7)
 
+### Detalle de los PROCEDIMIENTOS ALMACENADOS 🚀
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+### SP_HOSPITAL_REGISTRAR 📌
+Se encarga de registrar un nuevo hospital en la base de datos, asegurando que los datos sean válidos antes de la inserción.
+- No se permite insertar valores NULL en ningún parámetro.
+- Si algún parámetro es NULL, se lanza el error -20010.
+- p_Antiguedad debe ser un número positivo (>= 0).
+- p_Area debe ser mayor que 0.
+  
+### Insercion 
 
-### Prerequisites
+Si no se cumplen estas condiciones, se lanza el error -20011.
+El procedimiento inserta un nuevo registro en la tabla Hospital con los datos proporcionados.
+Se usa seq_Hospital.NEXTVAL para generar un idHospital único.
+Se registra automáticamente la fecha de creación con SYSDATE.
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+```sql
+BEGIN
+    SP_HOSPITAL_REGISTRAR(
+        p_idDistrito => 3,
+        p_Nombre => 'Hospital Central',
+        p_Antiguedad => 15,
+        p_Area => 2500,
+        p_idSede => 1,
+        p_idGerente => 5,
+        p_idCondicion => 2
+    );
+END;
 
 ```
-Give an example
+
+### Manejo de Errores
+
+Si ocurre un error durante la inserción, el procedimiento:
+Realiza un ROLLBACK para evitar datos inconsistentes.
+Muestra un mensaje en la consola con DBMS_OUTPUT.PUT_LINE.
+
+
+### SP_HOSPITAL_ACTUALIZAR 📌
+permite actualizar la información de un hospital en la base de datos. Se asegura de que el hospital exista y
+que los datos ingresados sean válidos antes de aplicar los cambios.
+
+#### Validaciones Implementadas
+El ID del hospital es obligatorio:
+Si p_idHospital es NULL, se lanza el error -20012.
+
+Verificación de existencia del hospital:
+Si el UPDATE no afecta ninguna fila (SQL%ROWCOUNT = 0), significa que el idHospital no existe en la base de datos y se lanza el error -20014.
+
+ #### Manejo de Errores
+Si el hospital no existe (SQL%ROWCOUNT = 0), se lanza una excepción (-20014).
+Si ocurre un error durante la actualización, el procedimiento:
+Realiza un ROLLBACK para evitar datos inconsistentes.
+Muestra un mensaje en la consola con DBMS_OUTPUT.PUT_LINE.
+
+```sql
+BEGIN
+    SP_HOSPITAL_ACTUALIZAR(
+        p_idHospital => 101,
+        p_idDistrito => 8,
+        p_idSede => 4,
+        p_idGerente => 10,
+        p_idCondicion => 2
+    );
+END;
+```
+### SP_HOSPITAL_ELIMINAR 📌
+
+Permite eliminar un hospital de la base de datos mediante su idHospital. Antes de eliminar, se realizan validaciones para garantizar 
+que el ID proporcionado sea válido.
+
+#### Validaciones Implementadas
+El ID del hospital es obligatorio:
+
+Si p_idHospital es NULL, se lanza el error -20015.
+Verificación de existencia del hospital:
+
+Si el DELETE no afecta ninguna fila (SQL%ROWCOUNT = 0), significa que el idHospital no existe en la base de datos y se lanza el error -20016.
+
+#### Manejo de Errores
+Si el idHospital no existe en la tabla, se lanza una excepción con el código -20016.
+Si ocurre un error durante la eliminación, el procedimiento:
+Realiza un ROLLBACK para evitar datos inconsistentes.
+Muestra un mensaje de error en la consola con DBMS_OUTPUT.PUT_LINE.
+
+```sql
+BEGIN
+    SP_HOSPITAL_ELIMINAR(p_idHospital => 101);
+END;
 ```
 
-### And coding style tests
+### SP_HOSPITAL_LISTAR 📌 dinamico
 
-Explain what these tests test and why
+Permite obtener una lista de hospitales, incluyendo detalles sobre su ubicación, gerente, sede y condición. 
+Se puede filtrar por descCondicion para listar hospitales con una condición específica.
+
+Funcionamiento
+Consulta principal:
+
+Se obtiene información del hospital junto con la descripción de su distrito, gerente, sede y condición.
+Se utilizan JOINs para unir las tablas Hospital, Distrito, Gerente, Sede y Condicion.
+
+Filtrado dinámico:
+Si se proporciona el parámetro p_condicion, la consulta incluirá un WHERE para listar solo los hospitales con esa condición.
+
+Recorrido del cursor:
+Se abre un SYS_REFCURSOR para iterar sobre los resultados y mostrarlos con DBMS_OUTPUT.PUT_LINE.
+
+```sql
+BEGIN
+    SP_HOSPITAL_LISTAR('Activo');
+END;
 
 ```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **George Chinchayan Martinez - 
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+## auhor George Chinchayan Martinez 🔥🔥🔥
